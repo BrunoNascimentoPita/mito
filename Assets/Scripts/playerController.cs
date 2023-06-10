@@ -22,8 +22,9 @@ public class PlayerController : MonoBehaviour
 
     public GameObject gameOverPanel;
     public GameObject playerObject;
-    public GameObject damageTextPrefab;
-    public float damageTextDuration = 0.4f;
+
+    public Image damageImage; // Referência à imagem de aviso de dano
+    public float damageImageDuration = 0.1f; // Duração da exibição da imagem de aviso de dano
 
     private void Start()
     {
@@ -77,6 +78,19 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("Attack");
         animator.SetBool("IsAttacking", true);
 
+        // Detectar colisão com inimigos na área de ataque
+        Collider2D[] enemies = Physics2D.OverlapBoxAll(attackArea.transform.position, attackArea.transform.localScale, 0f);
+
+        // Aplicar dano aos inimigos atingidos
+        foreach (Collider2D enemy in enemies)
+        {
+            EnemyController enemyController = enemy.GetComponent<EnemyController>();
+            if (enemyController != null)
+            {
+                enemyController.TakeDamage(50);
+            }
+        }
+
         Invoke("ResetAttack", 0.1f);
     }
 
@@ -100,48 +114,25 @@ public class PlayerController : MonoBehaviour
         // Verificar se o jogador está morto
         if (currentHealth <= 0)
         {
-            Die();
+            currentHealth = 0;
+            gameOverPanel.SetActive(true);
+            playerObject.SetActive(false);
         }
 
-        // Atualizar o medidor de vida
-        float normalizedHealth = (float)currentHealth / maxHealth;
-        healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, normalizedHealth, Time.deltaTime * healthUpdateSpeed);
+        healthBar.fillAmount = (float)currentHealth / maxHealth;
 
-        // Realizar o knockback
-        float knockbackDirection = isFacingRight ? -1f : 1f;
-        Knockback(knockbackDirection);
-
-        // Exibir o texto de dano
-        ShowDamageText(damage);
+        // Exibir a imagem de aviso de dano
+        ShowDamageImage();
     }
 
-    private void ShowDamageText(int damage)
+    private void ShowDamageImage()
     {
-        GameObject damageTextObject = Instantiate(damageTextPrefab, transform.position, Quaternion.identity);
-        DamageText damageText = damageTextObject.GetComponent<DamageText>();
-        damageText.ShowDamage(damage);
-
-        Destroy(damageTextObject, damageTextDuration);
+        damageImage.gameObject.SetActive(true);
+        Invoke("HideDamageImage", damageImageDuration);
     }
 
-    public void Knockback(float knockbackDirection)
+    private void HideDamageImage()
     {
-        float knockbackForce = 5f; // Força de knockback
-
-        // Aplicar força no sentido oposto ao flip
-        rb.AddForce(new Vector2(knockbackDirection * knockbackForce, 0f), ForceMode2D.Impulse);
-    }
-
-    private void Die()
-    {
-        healthBar.gameObject.SetActive(false);
-        // Desativar o jogador
-        playerObject.SetActive(false);
-
-        // Ativar o painel de derrota
-        gameOverPanel.SetActive(true);
-
-        // Pausar o jogo
-        Time.timeScale = 0f;
+        damageImage.gameObject.SetActive(false);
     }
 }

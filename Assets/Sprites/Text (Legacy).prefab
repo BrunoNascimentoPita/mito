@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8648587195366704979}
   - component: {fileID: 5772410064838844154}
   - component: {fileID: 281559085055032015}
+  - component: {fileID: 7936073386067428609}
   m_Layer: 5
   m_Name: Text (Legacy)
   m_TagString: Untagged
@@ -80,3 +81,18 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: 1
+--- !u!114 &7936073386067428609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289936097524711519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd8d44f51833df4fa471869b20860a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+  fadeDuration: 1
+  damageText: {fileID: 281559085055032015}

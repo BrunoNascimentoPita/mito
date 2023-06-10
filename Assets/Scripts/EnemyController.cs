@@ -6,7 +6,10 @@ public class EnemyController : MonoBehaviour
     public Transform groundCheck; // Objeto usado para verificar se o inimigo está no chão
     public LayerMask groundLayer; // Layer que representa o chão
     public GameObject wallObject; // Objeto de parede que o inimigo irá verificar a colisão
-    public float knockbackForce = 5f; // Força do knockback
+    
+
+    public int maxHealth = 150; // Vida máxima do inimigo
+    private int currentHealth; // Vida atual do inimigo
 
     private Rigidbody2D rb;
     private bool isFacingRight = true;
@@ -15,6 +18,7 @@ public class EnemyController : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        currentHealth = maxHealth;
     }
 
     private void Update()
@@ -50,10 +54,18 @@ public class EnemyController : MonoBehaviour
         {
             // Reduzir a vida do jogador
             PlayerController player = collision.gameObject.GetComponent<PlayerController>();
-            player.TakeDamage(1);
+            player.TakeDamage(50);
+        }
+    }
 
-            // Empurrar o jogador na direção oposta ao flip do inimigo
-            player.Knockback(-transform.localScale.x);
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+
+        // Verificar se o inimigo está morto
+        if (currentHealth <= 0)
+        {
+            Destroy(gameObject);
         }
     }
 
